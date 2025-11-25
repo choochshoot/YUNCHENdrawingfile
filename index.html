@@ -6,6 +6,7 @@
     <title>Programa de Dibujo Yunchen</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
             --morado-oscuro: #4a1e8c;
@@ -597,20 +598,30 @@
     </div>
 
     <script>
+        // Configuración de Supabase
+        const SUPABASE_URL = 'https://tu-proyecto.supabase.co';
+        const SUPABASE_ANON_KEY = 'tu-anon-key';
+        
+        // Inicializar Supabase
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
         // Contraseña de profesor
         const PROFESSOR_PASSWORD = "coche#34";
         
-        // Configuración de la aplicación
-        const config = {
+        // Configuración por defecto de la aplicación
+        const defaultConfig = {
             coins: 60,
-            avatar: 'https://i.imgur.com/x3mR3pN.png', // Avatar de ejemplo
-            coin: 'https://i.imgur.com/8Q6ZQ0W.png',   // Coin de ejemplo
-            achievement: 'https://i.imgur.com/medalla.png' // Logro de ejemplo
+            avatar: 'https://i.imgur.com/x3mR3pN.png',
+            coin: 'https://i.imgur.com/8Q6ZQ0W.png',
+            achievement: 'https://i.imgur.com/medalla.png'
         };
 
         // Estado para controlar qué logros se muestran
         let logrosVisibles = 4;
         let todosLosLogrosCargados = false;
+
+        // Configuración actual de la aplicación
+        let config = {...defaultConfig};
 
         // Datos de logros (fechas de cada clase)
         const achievements = [
@@ -908,8 +919,77 @@
             }
         ];
 
+        // Función para guardar la configuración en localStorage
+        function guardarConfiguracion() {
+            localStorage.setItem('yunchenAppConfig', JSON.stringify(config));
+        }
+
+        // Función para cargar la configuración desde localStorage
+        function cargarConfiguracion() {
+            const configGuardada = localStorage.getItem('yunchenAppConfig');
+            if (configGuardada) {
+                config = {...defaultConfig, ...JSON.parse(configGuardada)};
+            }
+        }
+
+        // Función para guardar configuración en Supabase
+        async function guardarConfiguracionEnSupabase() {
+            try {
+                const { data, error } = await supabase
+                    .from('app_config')
+                    .upsert({
+                        id: 1,
+                        config_data: config,
+                        updated_at: new Date()
+                    });
+
+                if (error) {
+                    console.error('Error guardando en Supabase:', error);
+                    return false;
+                }
+                return true;
+            } catch (error) {
+                console.error('Error conectando con Supabase:', error);
+                return false;
+            }
+        }
+
+        // Función para cargar configuración desde Supabase
+        async function cargarConfiguracionDesdeSupabase() {
+            try {
+                const { data, error } = await supabase
+                    .from('app_config')
+                    .select('config_data')
+                    .eq('id', 1)
+                    .single();
+
+                if (error) {
+                    console.error('Error cargando desde Supabase:', error);
+                    return false;
+                }
+
+                if (data && data.config_data) {
+                    config = {...defaultConfig, ...data.config_data};
+                    guardarConfiguracion(); // Guardar en localStorage como respaldo
+                    return true;
+                }
+                return false;
+            } catch (error) {
+                console.error('Error conectando con Supabase:', error);
+                return false;
+            }
+        }
+
         // Función para cargar imágenes iniciales
-        function cargarImagenesIniciales() {
+        async function cargarImagenesIniciales() {
+            // Intentar cargar desde Supabase primero
+            const cargadoDesdeSupabase = await cargarConfiguracionDesdeSupabase();
+            
+            // Si no se pudo cargar desde Supabase, cargar desde localStorage
+            if (!cargadoDesdeSupabase) {
+                cargarConfiguracion();
+            }
+            
             // Cargar avatar
             const avatarContainer = document.getElementById('avatar-container');
             avatarContainer.innerHTML = `<img src="${config.avatar}" alt="Avatar Yunchen" class="avatar-img" id="yunchen-avatar">`;
@@ -1022,47 +1102,53 @@
         }
 
         // Funciones de actualización de contenido
-        function actualizarCoinsDesdeInput() {
+        async function actualizarCoinsDesdeInput() {
             const nuevoValor = parseInt(document.getElementById('coins-input').value);
             if (!isNaN(nuevoValor) && nuevoValor >= 0) {
-                actualizarCoins(nuevoValor);
+                await actualizarCoins(nuevoValor);
                 document.getElementById('coins-input').value = '';
             } else {
                 alert('Por favor, ingresa un número válido para las coins');
             }
         }
 
-        function actualizarCoins(nuevoValor) {
-            document.getElementById('coins-count').textContent = nuevoValor;
+        async function actualizarCoins(nuevoValor) {
             config.coins = nuevoValor;
+            document.getElementById('coins-count').textContent = nuevoValor;
+            
+            // Guardar en localStorage
+            guardarConfiguracion();
+            
+            // Intentar guardar en Supabase
+            await guardarConfiguracionEnSupabase();
         }
 
-        function actualizarAvatarDesdeInput() {
+        async function actualizarAvatarDesdeInput() {
             const nuevaUrl = document.getElementById('avatar-url').value;
             if (nuevaUrl) {
-                actualizarAvatar(nuevaUrl);
+                await actualizarAvatar(nuevaUrl);
                 document.getElementById('avatar-url').value = '';
             } else {
                 alert('Por favor, ingresa una URL válida de Imgur');
             }
         }
 
-        function actualizarCoinIconDesdeInput() {
+        async function actualizarCoinIconDesdeInput() {
             const nuevaUrl = document.getElementById('coin-url').value;
             if (nuevaUrl) {
-                actualizarCoinIcon(nuevaUrl);
+                await actualizarCoinIcon(nuevaUrl);
                 document.getElementById('coin-url').value = '';
             } else {
                 alert('Por favor, ingresa una URL válida de Imgur');
             }
         }
 
-        function actualizarLogroDesdeInput() {
+        async function actualizarLogroDesdeInput() {
             const indice = parseInt(document.getElementById('achievement-index').value);
             const nuevaUrl = document.getElementById('achievement-url').value;
             
             if (!isNaN(indice) && indice >= 0 && indice < achievements.length && nuevaUrl) {
-                actualizarLogro(indice, nuevaUrl);
+                await actualizarLogro(indice, nuevaUrl);
                 document.getElementById('achievement-index').value = '';
                 document.getElementById('achievement-url').value = '';
             } else {
@@ -1070,19 +1156,25 @@
             }
         }
 
-        function actualizarTodosLosLogros() {
+        async function actualizarTodosLosLogros() {
             const nuevaUrl = document.getElementById('all-achievements-url').value;
             if (nuevaUrl) {
+                config.achievement = nuevaUrl;
                 for (let i = 0; i < achievements.length; i++) {
                     actualizarLogro(i, nuevaUrl);
                 }
                 document.getElementById('all-achievements-url').value = '';
+                
+                // Guardar cambios
+                guardarConfiguracion();
+                await guardarConfiguracionEnSupabase();
+                cargarLogros(); // Recargar para mostrar los cambios
             } else {
                 alert('Por favor, ingresa una URL válida de Imgur');
             }
         }
 
-        function actualizarAvatar(nuevaUrl) {
+        async function actualizarAvatar(nuevaUrl) {
             const avatarImg = document.getElementById('yunchen-avatar');
             if (avatarImg) {
                 avatarImg.src = nuevaUrl;
@@ -1091,9 +1183,13 @@
                     `<img src="${nuevaUrl}" alt="Avatar Yunchen" class="avatar-img" id="yunchen-avatar">`;
             }
             config.avatar = nuevaUrl;
+            
+            // Guardar cambios
+            guardarConfiguracion();
+            await guardarConfiguracionEnSupabase();
         }
 
-        function actualizarCoinIcon(nuevaUrl) {
+        async function actualizarCoinIcon(nuevaUrl) {
             const coinImg = document.getElementById('coin-image');
             if (coinImg) {
                 coinImg.src = nuevaUrl;
@@ -1102,16 +1198,16 @@
                     `<img src="${nuevaUrl}" alt="Coin" class="coin-img" id="coin-image">`;
             }
             config.coin = nuevaUrl;
+            
+            // Guardar cambios
+            guardarConfiguracion();
+            await guardarConfiguracionEnSupabase();
         }
 
         function actualizarLogro(indice, nuevaUrl) {
             const achievementImg = document.getElementById(`achievement-${indice}`);
             if (achievementImg) {
                 achievementImg.src = nuevaUrl;
-            } else {
-                // Si la imagen no existe (porque el logro no se ha cargado aún), actualizamos la configuración
-                // y la imagen se cargará cuando se muestre ese logro
-                config.achievement = nuevaUrl;
             }
         }
 
