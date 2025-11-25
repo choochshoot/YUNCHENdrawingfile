@@ -1267,32 +1267,34 @@ async function actualizarCoinsDesdeInput() {
     }
 }
 
-        // Nueva función para subir y actualizar avatar
-        async function subirYActualizarAvatar() {
-            const fileInput = document.getElementById('avatar-file');
-            if (!fileInput.files || fileInput.files.length === 0) {
-                alert('Por favor, selecciona un archivo para el avatar');
-                return;
-            }
-            
-            const file = fileInput.files[0];
-            
-            // Validar tamaño del archivo (máximo 5MB)
-            if (file.size > 5 * 1024 * 1024) {
-                alert('El archivo es demasiado grande. Máximo 5MB permitido.');
-                return;
-            }
-            
-            const result = await subirArchivo(file, 'yunchen-app', 'avatars', 'avatar');
-            
-            if (result.url) {
-                await actualizarAvatar(result.url);
-                fileInput.value = ''; // Limpiar input
-                alert('Avatar actualizado correctamente');
-            } else {
-                alert('Error al subir el avatar: ' + result.error);
-            }
-        }
+       // Nueva función para subir y actualizar avatar
+async function subirYActualizarAvatar() {
+    const fileInput = document.getElementById('avatar-file');
+    if (!fileInput.files || fileInput.files.length === 0) {
+        alert('Por favor, selecciona un archivo para el avatar');
+        return;
+    }
+    
+    const file = fileInput.files[0];
+    
+    // Validar tamaño del archivo (máximo 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        alert('El archivo es demasiado grande. Máximo 5MB permitido.');
+        return;
+    }
+    
+    console.log('Iniciando subida de avatar...');
+    const result = await subirArchivo(file, 'yunchen-app', 'avatars', 'avatar');
+    
+    if (result.url) {
+        await actualizarAvatar(result.url);
+        fileInput.value = ''; // Limpiar input
+        alert('Avatar actualizado correctamente');
+    } else {
+        console.error('Error al subir avatar:', result.error);
+        alert('Error al subir el avatar: ' + result.error);
+    }
+}
 
         // Nueva función para subir y actualizar coin
         async function subirYActualizarCoin() {
