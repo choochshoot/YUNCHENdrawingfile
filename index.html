@@ -1000,28 +1000,53 @@
             }
         }
 
-        // Función para guardar configuración en Supabase
-        async function guardarConfiguracionEnSupabase() {
-            try {
-                const { data, error } = await supabase
-                    .from('app_config')
-                    .upsert({
-                        id: 1,
-                        config_data: config,
-                        updated_at: new Date()
-                    });
+        // Función MEJORADA para guardar en Supabase
+async function guardarConfiguracionEnSupabase() {
+    try {
+        console.log('🔄 Intentando guardar en Supabase...', config);
+        
+        // Usar upsert que maneja tanto INSERT como UPDATE
+        const { data, error } = await supabase
+            .from('app_config')
+            .upsert({
+                id: 1,
+                config_data: config,
+                updated_at: new Date()
+            }, {
+                onConflict: 'id'  // Especificar la columna de conflicto
+            });
 
-                if (error) {
-                    console.error('Error guardando en Supabase:', error);
-                    return false;
-                }
-                console.log('Configuración guardada en Supabase:', data);
-                return true;
-            } catch (error) {
-                console.error('Error conectando con Supabase:', error);
+        if (error) {
+            console.error('❌ Error guardando en Supabase:', error);
+            
+            // Intentar con UPDATE directo si upsert falla
+            console.log('🔄 Intentando con UPDATE directo...');
+            const { data: updateData, error: updateError } = await supabase
+                .from('app_config')
+                .update({
+                    config_data: config,
+                    updated_at: new Date()
+                })
+                .eq('id', 1);
+                
+            if (updateError) {
+                console.error('❌ Error en UPDATE también:', updateError);
+                alert('Error de permisos en Supabase. Ejecuta el SQL de solución.');
                 return false;
             }
+            
+            console.log('✅ Configuración guardada con UPDATE:', updateData);
+            return true;
         }
+        
+        console.log('✅ Configuración guardada en Supabase con UPSERT:', data);
+        return true;
+        
+    } catch (error) {
+        console.error('❌ Error conectando con Supabase:', error);
+        return false;
+    }
+}
 
         // Función para cargar configuración desde Supabase
         async function cargarConfiguracionDesdeSupabase() {
