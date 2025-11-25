@@ -1497,29 +1497,34 @@ async function actualizarCoinsDesdeInput() {
             setTimeout(verificarStorage, 2000);
         });
         // Inicializar la aplicación
-        document.addEventListener('DOMContentLoaded', function() {
-            cargarImagenesIniciales();
-            
-            // Configurar evento para el botón de acceso profesor
-            document.getElementById('admin-btn').addEventListener('click', mostrarModalPassword);
-            
-            // Configurar evento para el botón "Ver más logros"
-            document.getElementById('view-more-btn').addEventListener('click', cargarMasLogros);
-            
-            // Permitir enviar contraseña con Enter
-            document.getElementById('password-input').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    verificarPassword();
-                }
-            });
-            
-            // Hacer funciones globales para facilitar el acceso desde la consola
-            window.actualizarCoins = actualizarCoins;
-            window.actualizarAvatar = actualizarAvatar;
-            window.actualizarCoinIcon = actualizarCoinIcon;
-            window.actualizarLogro = actualizarLogro;
-            window.subirArchivo = subirArchivo;
-        });
+document.addEventListener('DOMContentLoaded', function() {
+    cargarImagenesIniciales();
+    
+    // Configurar evento para el botón de acceso profesor
+    document.getElementById('admin-btn').addEventListener('click', mostrarModalPassword);
+    
+    // Configurar evento para el botón "Ver más logros"
+    document.getElementById('view-more-btn').addEventListener('click', cargarMasLogros);
+    
+    // Permitir enviar contraseña con Enter
+    document.getElementById('password-input').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            verificarPassword();
+        }
+    });
+    
+    // =============================================
+    // LLAMADA TEMPORAL - ELIMINAR DESPUÉS
+    // =============================================
+    setTimeout(verificarStorage, 2000);
+    
+    // Hacer funciones globales para facilitar el acceso desde la consola
+    window.actualizarCoins = actualizarCoins;
+    window.actualizarAvatar = actualizarAvatar;
+    window.actualizarCoinIcon = actualizarCoinIcon;
+    window.actualizarLogro = actualizarLogro;
+    window.subirArchivo = subirArchivo;
+});
     </script>
 </body>
 </html>
