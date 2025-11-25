@@ -923,59 +923,64 @@
             }
         ];
 
-        // Función para subir archivo a Supabase Storage
-        async function subirArchivo(file, bucket, carpeta, nombreArchivo) {
-            try {
-                // Verificar que el bucket existe
-                const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
-                if (bucketsError) {
-                    console.error('Error listando buckets:', bucketsError);
-                    return { error: 'Error conectando con el servidor de almacenamiento' };
-                }
-                
-                const bucketExists = buckets.some(b => b.name === bucket);
-                if (!bucketExists) {
-                    console.error(`El bucket ${bucket} no existe`);
-                    return { error: `El bucket ${bucket} no existe. Crea el bucket en Supabase primero.` };
-                }
-                
-                // Generar un nombre único para el archivo
-                const extension = file.name.split('.').pop();
-                const nombreUnico = `${nombreArchivo || Date.now()}.${extension}`;
-                const rutaCompleta = `${carpeta}/${nombreUnico}`;
-                
-                console.log('Subiendo archivo:', rutaCompleta);
-                
-                const { data, error } = await supabase.storage
-                    .from(bucket)
-                    .upload(rutaCompleta, file, {
-                        cacheControl: '3600',
-                        upsert: true
-                    });
-                
-                if (error) {
-                    console.error('Error subiendo archivo:', error);
-                    
-                    // Verificar si es un error de políticas
-                    if (error.message.includes('policy') || error.message.includes('Policy')) {
-                        return { error: 'Error de permisos. Verifica las políticas RLS del bucket.' };
-                    }
-                    
-                    return { error: error.message };
-                }
-                
-                // Obtener URL pública del archivo
-                const { data: urlData } = supabase.storage
-                    .from(bucket)
-                    .getPublicUrl(rutaCompleta);
-                
-                console.log('Archivo subido. URL:', urlData.publicUrl);
-                return { url: urlData.publicUrl };
-            } catch (error) {
-                console.error('Error en subirArchivo:', error);
-                return { error: error.message };
-            }
+        // Función MEJORADA para subir archivo a Supabase Storage
+async function subirArchivo(file, bucket, carpeta, nombreArchivo) {
+    try {
+        console.log('🔄 Iniciando subida de archivo...', { bucket, carpeta, nombreArchivo });
+        
+        // Verificar que el bucket existe
+        const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+        if (bucketsError) {
+            console.error('❌ Error listando buckets:', bucketsError);
+            return { error: 'Error conectando con el servidor de almacenamiento' };
         }
+        
+        const bucketExists = buckets.some(b => b.name === bucket);
+        if (!bucketExists) {
+            console.error(`❌ El bucket ${bucket} no existe`);
+            return { error: `El bucket ${bucket} no existe. Ve a Supabase > Storage > Crea el bucket "${bucket}".` };
+        }
+        
+        // Generar un nombre único para el archivo
+        const extension = file.name.split('.').pop();
+        const nombreUnico = `${nombreArchivo || Date.now()}.${extension}`;
+        const rutaCompleta = `${carpeta}/${nombreUnico}`;
+        
+        console.log('📤 Subiendo archivo a:', rutaCompleta);
+        
+        // Subir el archivo
+        const { data, error } = await supabase.storage
+            .from(bucket)
+            .upload(rutaCompleta, file, {
+                cacheControl: '3600',
+                upsert: true
+            });
+        
+        if (error) {
+            console.error('❌ Error subiendo archivo:', error);
+            
+            // Verificar si es un error de políticas
+            if (error.message.includes('policy') || error.message.includes('Policy')) {
+                return { error: 'Error de permisos. Ejecuta el SQL de políticas RLS para storage.' };
+            }
+            
+            return { error: error.message };
+        }
+        
+        console.log('✅ Archivo subido exitosamente:', data);
+        
+        // Obtener URL pública del archivo
+        const { data: urlData } = supabase.storage
+            .from(bucket)
+            .getPublicUrl(rutaCompleta);
+        
+        console.log('🔗 URL pública:', urlData.publicUrl);
+        return { url: urlData.publicUrl };
+    } catch (error) {
+        console.error('❌ Error en subirArchivo:', error);
+        return { error: error.message };
+    }
+}
 
         // Función para guardar la configuración en localStorage
         function guardarConfiguracion() {
