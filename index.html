@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Programa de Dibujo Yunchen</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     <style>
         :root {
             --morado-oscuro: #4a1e8c;
@@ -30,6 +31,7 @@
             padding: 0;
             margin: 0;
             min-height: 100vh;
+            font-size: 16px;
         }
 
         .container {
@@ -76,7 +78,7 @@
         }
 
         .artist-name {
-            font-size: 18px;
+            font-size: 16px;
             margin-bottom: 8px;
             color: var(--amarillo);
         }
@@ -105,7 +107,7 @@
         }
 
         .coins-text {
-            font-size: 16px;
+            font-size: 14px;
             color: var(--amarillo);
         }
 
@@ -248,7 +250,7 @@
 
         /* Sección Logros */
         .section-title {
-            font-size: 20px;
+            font-size: 18px;
             text-align: center;
             margin: 25px 0 15px;
             color: var(--rosa);
@@ -257,9 +259,9 @@
 
         .achievements-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 15px;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
         }
 
         .achievement-card {
@@ -277,11 +279,16 @@
         }
 
         .achievement-icon {
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             margin: 0 auto 10px;
             border-radius: 10px;
             overflow: hidden;
+            background-color: var(--morado-medio);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
         }
 
         .achievement-img {
@@ -293,6 +300,26 @@
         .achievement-date {
             font-size: 12px;
             color: var(--amarillo);
+        }
+
+        .view-more-container {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .view-more-btn {
+            background: var(--rosa);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .view-more-btn:hover {
+            background: var(--morado-claro);
         }
 
         /* Sección Programa */
@@ -315,10 +342,11 @@
             font-size: 12px;
             margin-bottom: 15px;
             text-align: center;
+            line-height: 1.8;
         }
 
         .topics-container {
-            max-height: 400px;
+            max-height: 500px;
             overflow-y: auto;
             padding-right: 10px;
         }
@@ -348,6 +376,7 @@
             justify-content: center;
             font-size: 14px;
             margin-right: 10px;
+            flex-shrink: 0;
         }
 
         .topic-title {
@@ -356,12 +385,13 @@
         }
 
         .topic-content {
-            font-size: 11px;
+            font-size: 12px;
             margin-left: 40px;
         }
 
         .topic-section {
-            margin-bottom: 5px;
+            margin-bottom: 8px;
+            line-height: 1.6;
         }
 
         .coins-info {
@@ -398,27 +428,67 @@
             border-color: var(--blanco) var(--morado-claro) var(--morado-claro) var(--blanco);
         }
 
+        .pixel-text {
+            font-family: 'Press Start 2P', cursive;
+            letter-spacing: 0.5px;
+        }
+
         @media (max-width: 480px) {
-            .artist-name {
-                font-size: 16px;
-            }
-            
-            .coins-text {
+            body {
                 font-size: 14px;
             }
             
+            .artist-name {
+                font-size: 14px;
+            }
+            
+            .coins-text {
+                font-size: 12px;
+            }
+            
             .section-title {
-                font-size: 18px;
+                font-size: 16px;
             }
             
             .achievements-grid {
-                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .achievement-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
             }
             
             .admin-btn {
                 position: static;
                 margin-top: 10px;
                 width: 100%;
+                font-size: 12px;
+            }
+            
+            .topic-title {
+                font-size: 12px;
+            }
+            
+            .topic-content {
+                font-size: 10px;
+                margin-left: 0;
+            }
+            
+            .topic-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .topic-number {
+                margin-bottom: 5px;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .achievements-grid {
+                grid-template-columns: repeat(4, 1fr);
             }
         }
     </style>
@@ -432,57 +502,57 @@
                     <!-- Avatar de Yunchen se cargará dinámicamente -->
                 </div>
                 <div class="artist-details">
-                    <div class="artist-name">Artista: Yunchen</div>
+                    <div class="artist-name pixel-text">Artista: Yunchen</div>
                     <div class="coins-container">
                         <div class="coin-icon" id="coin-icon">
                             <!-- Icono de coin se cargará dinámicamente -->
                         </div>
-                        <div class="coins-text">Coins Logradas: <span id="coins-count">60</span></div>
+                        <div class="coins-text pixel-text">Coins Logradas: <span id="coins-count">60</span></div>
                     </div>
                 </div>
             </div>
-            <button class="admin-btn" id="admin-btn">
+            <button class="admin-btn pixel-text" id="admin-btn">
                 <i class="fas fa-user-shield"></i> Acceso Profesor
             </button>
         </header>
 
         <!-- Panel de actualización (oculto inicialmente) -->
         <div class="update-controls" id="update-controls">
-            <h2 class="section-title">PANEL DE PROFESOR - ACTUALIZAR CONTENIDO</h2>
+            <h2 class="section-title pixel-text">PANEL DE PROFESOR - ACTUALIZAR CONTENIDO</h2>
             
             <div class="control-group">
-                <label class="control-label">Actualizar Coins Logradas:</label>
+                <label class="control-label pixel-text">Actualizar Coins Logradas:</label>
                 <input type="number" id="coins-input" class="number-input" placeholder="Nuevo valor de coins" min="0">
-                <button class="update-btn" onclick="actualizarCoinsDesdeInput()">Actualizar Coins</button>
+                <button class="update-btn pixel-text" onclick="actualizarCoinsDesdeInput()">Actualizar Coins</button>
             </div>
             
             <div class="control-group">
-                <label class="control-label">URL Avatar Yunchen (Imgur):</label>
+                <label class="control-label pixel-text">URL Avatar Yunchen (Imgur):</label>
                 <input type="text" id="avatar-url" class="url-input" placeholder="https://i.imgur.com/...">
-                <button class="update-btn" onclick="actualizarAvatarDesdeInput()">Actualizar Avatar</button>
+                <button class="update-btn pixel-text" onclick="actualizarAvatarDesdeInput()">Actualizar Avatar</button>
             </div>
             
             <div class="control-group">
-                <label class="control-label">URL Icono Coin (Imgur):</label>
+                <label class="control-label pixel-text">URL Icono Coin (Imgur):</label>
                 <input type="text" id="coin-url" class="url-input" placeholder="https://i.imgur.com/...">
-                <button class="update-btn" onclick="actualizarCoinIconDesdeInput()">Actualizar Coin</button>
+                <button class="update-btn pixel-text" onclick="actualizarCoinIconDesdeInput()">Actualizar Coin</button>
             </div>
             
             <div class="control-group">
-                <label class="control-label">Actualizar Logro Específico:</label>
+                <label class="control-label pixel-text">Actualizar Logro Específico:</label>
                 <input type="number" id="achievement-index" class="number-input" placeholder="Índice (0-35)" min="0" max="35">
                 <input type="text" id="achievement-url" class="url-input" placeholder="https://i.imgur.com/...">
-                <button class="update-btn" onclick="actualizarLogroDesdeInput()">Actualizar Logro</button>
+                <button class="update-btn pixel-text" onclick="actualizarLogroDesdeInput()">Actualizar Logro</button>
             </div>
             
             <div class="control-group">
-                <label class="control-label">Actualizar Todos los Logros:</label>
+                <label class="control-label pixel-text">Actualizar Todos los Logros:</label>
                 <input type="text" id="all-achievements-url" class="url-input" placeholder="https://i.imgur.com/...">
-                <button class="update-btn" onclick="actualizarTodosLosLogros()">Actualizar Todos</button>
+                <button class="update-btn pixel-text" onclick="actualizarTodosLosLogros()">Actualizar Todos</button>
             </div>
             
             <div class="control-group">
-                <button class="update-btn" onclick="cerrarPanelProfesor()">
+                <button class="update-btn pixel-text" onclick="cerrarPanelProfesor()">
                     <i class="fas fa-times"></i> Cerrar Panel de Profesor
                 </button>
             </div>
@@ -491,26 +561,30 @@
         <!-- Modal de contraseña -->
         <div class="modal" id="password-modal">
             <div class="modal-content">
-                <h2 class="modal-title">ACCESO DE PROFESOR</h2>
-                <p style="margin-bottom: 15px; font-size: 12px;">Ingresa la contraseña para acceder al panel de profesor:</p>
+                <h2 class="modal-title pixel-text">ACCESO DE PROFESOR</h2>
+                <p style="margin-bottom: 15px; font-size: 12px;" class="pixel-text">Ingresa la contraseña para acceder al panel de profesor:</p>
                 <input type="password" id="password-input" class="password-input" placeholder="Contraseña">
                 <div class="modal-buttons">
-                    <button class="modal-btn cancel" onclick="cerrarModal()">Cancelar</button>
-                    <button class="modal-btn" onclick="verificarPassword()">Acceder</button>
+                    <button class="modal-btn cancel pixel-text" onclick="cerrarModal()">Cancelar</button>
+                    <button class="modal-btn pixel-text" onclick="verificarPassword()">Acceder</button>
                 </div>
             </div>
         </div>
 
         <!-- Sección Logros -->
-        <h2 class="section-title">LOGROS</h2>
+        <h2 class="section-title pixel-text">LOGROS</h2>
         <div class="achievements-grid" id="achievements-container">
-            <!-- Los logros se cargarán dinámicamente con JavaScript -->
+            <!-- Los primeros 4 logros se cargarán dinámicamente con JavaScript -->
+        </div>
+        
+        <div class="view-more-container">
+            <button class="view-more-btn pixel-text" id="view-more-btn">Ver Más Logros</button>
         </div>
 
         <!-- Sección Programa -->
         <div class="program-info">
-            <h2 class="program-title">🎨 PROGRAMA DE DIBUJO – 36 TEMAS A PROFUNDIZAR</h2>
-            <div class="program-details">
+            <h2 class="program-title pixel-text">🎨 PROGRAMA DE DIBUJO – 36 TEMAS A PROFUNDIZAR</h2>
+            <div class="program-details pixel-text">
                 1 clase semanal — domingos de 9 a 10 am — a domicilio<br>
                 Inicio de primera clase : 16 de noviembre<br>
                 Artista: Yunchen
@@ -533,6 +607,10 @@
             coin: 'https://i.imgur.com/8Q6ZQ0W.png',   // Coin de ejemplo
             achievement: 'https://i.imgur.com/medalla.png' // Logro de ejemplo
         };
+
+        // Estado para controlar qué logros se muestran
+        let logrosVisibles = 4;
+        let todosLosLogrosCargados = false;
 
         // Datos de logros (fechas de cada clase)
         const achievements = [
@@ -843,29 +921,53 @@
             // Cargar coins count
             document.getElementById('coins-count').textContent = config.coins;
             
-            // Cargar logros
+            // Cargar logros (solo los primeros 4)
             cargarLogros();
             
             // Cargar temas
             cargarTemas();
         }
 
-        // Función para cargar logros
+        // Función para cargar logros (solo los primeros 4 inicialmente)
         function cargarLogros() {
             const container = document.getElementById('achievements-container');
             container.innerHTML = '';
             
-            achievements.forEach((achievement, index) => {
+            // Mostrar solo los primeros logrosVisibles logros
+            const logrosAMostrar = achievements.slice(0, logrosVisibles);
+            
+            logrosAMostrar.forEach((achievement, index) => {
                 const card = document.createElement('div');
                 card.className = 'achievement-card pixel-border';
                 card.innerHTML = `
                     <div class="achievement-icon">
                         <img src="${config.achievement}" alt="Logro ${index + 1}" class="achievement-img" id="achievement-${index}">
                     </div>
-                    <div class="achievement-date">${achievement.date}</div>
+                    <div class="achievement-date pixel-text">${achievement.date}</div>
                 `;
                 container.appendChild(card);
             });
+            
+            // Actualizar el texto del botón
+            const viewMoreBtn = document.getElementById('view-more-btn');
+            if (logrosVisibles >= achievements.length) {
+                viewMoreBtn.textContent = "Todos los logros cargados";
+                viewMoreBtn.disabled = true;
+                todosLosLogrosCargados = true;
+            } else {
+                viewMoreBtn.textContent = "Ver Más Logros";
+                viewMoreBtn.disabled = false;
+                todosLosLogrosCargados = false;
+            }
+        }
+
+        // Función para cargar más logros
+        function cargarMasLogros() {
+            logrosVisibles += 4;
+            if (logrosVisibles > achievements.length) {
+                logrosVisibles = achievements.length;
+            }
+            cargarLogros();
         }
 
         // Función para cargar temas
@@ -879,13 +981,13 @@
                 topicElement.innerHTML = `
                     <div class="topic-header">
                         <div class="topic-number">${index + 1}</div>
-                        <div class="topic-title">${topic.title}</div>
+                        <div class="topic-title pixel-text">${topic.title}</div>
                     </div>
                     <div class="topic-content">
-                        <div class="topic-section"><strong>Teoría:</strong> ${topic.theory}</div>
-                        <div class="topic-section"><strong>Actividad:</strong> ${topic.activity}</div>
-                        <div class="topic-section coins-info"><strong>COINS:</strong> ${topic.coins}</div>
-                        <div class="topic-section reward-info"><strong>Recompensa:</strong> ${topic.reward}</div>
+                        <div class="topic-section pixel-text"><strong>Teoría:</strong> ${topic.theory}</div>
+                        <div class="topic-section pixel-text"><strong>Actividad:</strong> ${topic.activity}</div>
+                        <div class="topic-section coins-info pixel-text"><strong>COINS:</strong> ${topic.coins}</div>
+                        <div class="topic-section reward-info pixel-text"><strong>Recompensa:</strong> ${topic.reward}</div>
                     </div>
                 `;
                 container.appendChild(topicElement);
@@ -1006,6 +1108,10 @@
             const achievementImg = document.getElementById(`achievement-${indice}`);
             if (achievementImg) {
                 achievementImg.src = nuevaUrl;
+            } else {
+                // Si la imagen no existe (porque el logro no se ha cargado aún), actualizamos la configuración
+                // y la imagen se cargará cuando se muestre ese logro
+                config.achievement = nuevaUrl;
             }
         }
 
@@ -1015,6 +1121,9 @@
             
             // Configurar evento para el botón de acceso profesor
             document.getElementById('admin-btn').addEventListener('click', mostrarModalPassword);
+            
+            // Configurar evento para el botón "Ver más logros"
+            document.getElementById('view-more-btn').addEventListener('click', cargarMasLogros);
             
             // Permitir enviar contraseña con Enter
             document.getElementById('password-input').addEventListener('keypress', function(e) {
