@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Programa de Dibujo Yunchen</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --morado-oscuro: #4a1e8c;
+            --morado-medio: #7b3fe4;
+            --morado-claro: #9d6df7;
+            --rosa: #ff5c8d;
+            --amarillo: #ffd166;
+            --blanco: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Press Start 2P', cursive, Arial, sans-serif;
+            image-rendering: pixelated;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--morado-oscuro), var(--morado-medio));
+            color: var(--blanco);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        /* Header Styles */
+        header {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: 3px solid var(--rosa);
+            position: relative;
+        }
+
+        .artist-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .avatar-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            border: 3px solid var(--amarillo);
+            margin-right: 15px;
+            background-color: var(--morado-claro);
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .artist-details {
+            flex: 1;
+        }
+
+        .artist-name {
+            font-size: 18px;
+            margin-bottom: 8px;
+            color: var(--amarillo);
+        }
+
+        .coins-container {
+            display: flex;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 8px;
+            padding: 10px 15px;
+            border: 2px solid var(--amarillo);
+        }
+
+        .coin-icon {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: 50%;
+            overflow: hidden;
+        }
+
+        .coin-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .coins-text {
+            font-size: 16px;
+            color: var(--amarillo);
+        }
+
+        /* Botón de acceso profesor */
+        .admin-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--rosa);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 10px;
+            transition: background 0.3s;
+        }
+
+        .admin-btn:hover {
+            background: var(--morado-claro);
+        }
+
+        /* Modal de contraseña */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: var(--morado-oscuro);
+            border-radius: 12px;
+            padding: 20px;
+            width: 90%;
+            max-width: 400px;
+            border: 3px solid var(--rosa);
+            text-align: center;
+        }
+
+        .modal-title {
+            color: var(--amarillo);
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 2px solid var(--morado-claro);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 14px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .modal-btn {
+            background: var(--rosa);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+            flex: 1;
+            margin: 0 5px;
+        }
+
+        .modal-btn:hover {
+            background: var(--morado-claro);
+        }
+
+        .modal-btn.cancel {
+            background: var(--morado-medio);
+        }
+
+        /* Sección de actualización (oculta inicialmente) */
+        .update-controls {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 3px solid var(--amarillo);
+            display: none;
+        }
+
+        .control-group {
+            margin-bottom: 15px;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--amarillo);
+            font-size: 14px;
+        }
+
+        .url-input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 5px;
+            border: 2px solid var(--morado-claro);
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .update-btn {
+            background: var(--rosa);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+            width: 100%;
+        }
+
+        .update-btn:hover {
+            background: var(--morado-claro);
+        }
+
+        /* Sección Logros */
+        .section-title {
+            font-size: 20px;
+            text-align: center;
+            margin: 25px 0 15px;
+            color: var(--rosa);
+            text-shadow: 2px 2px 0 #000;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .achievement-card {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid var(--morado-claro);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .achievement-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .achievement-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 10px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .achievement-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .achievement-date {
+            font-size: 12px;
+            color: var(--amarillo);
+        }
+
+        /* Sección Programa */
+        .program-info {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 3px solid var(--morado-claro);
+        }
+
+        .program-title {
+            font-size: 18px;
+            color: var(--rosa);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .program-details {
+            font-size: 12px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .topics-container {
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+
+        .topic {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-left: 4px solid var(--rosa);
+        }
+
+        .topic-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .topic-number {
+            background: var(--rosa);
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .topic-title {
+            font-size: 14px;
+            color: var(--amarillo);
+        }
+
+        .topic-content {
+            font-size: 11px;
+            margin-left: 40px;
+        }
+
+        .topic-section {
+            margin-bottom: 5px;
+        }
+
+        .coins-info {
+            color: var(--amarillo);
+        }
+
+        .reward-info {
+            color: var(--rosa);
+        }
+
+        /* Scrollbar personalizado */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--rosa);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--morado-claro);
+        }
+
+        /* Efectos pixel art */
+        .pixel-border {
+            border-style: solid;
+            border-width: 4px;
+            border-color: var(--blanco) var(--morado-claro) var(--morado-claro) var(--blanco);
+        }
+
+        @media (max-width: 480px) {
+            .artist-name {
+                font-size: 16px;
+            }
+            
+            .coins-text {
+                font-size: 14px;
+            }
+            
+            .section-title {
+                font-size: 18px;
+            }
+            
+            .achievements-grid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            }
+            
+            .admin-btn {
+                position: static;
+                margin-top: 10px;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header>
+            <div class="artist-info">
+                <div class="avatar-container" id="avatar-container">
+                    <!-- Avatar de Yunchen se cargará dinámicamente -->
+                </div>
+                <div class="artist-details">
+                    <div class="artist-name">Artista: Yunchen</div>
+                    <div class="coins-container">
+                        <div class="coin-icon" id="coin-icon">
+                            <!-- Icono de coin se cargará dinámicamente -->
+                        </div>
+                        <div class="coins-text">Coins Logradas: <span id="coins-count">60</span></div>
+                    </div>
+                </div>
+            </div>
+            <button class="admin-btn" id="admin-btn">
+                <i class="fas fa-user-shield"></i> Acceso Profesor
+            </button>
+        </header>
+
+        <!-- Panel de actualización (oculto inicialmente) -->
+        <div class="update-controls" id="update-controls">
+            <h2 class="section-title">PANEL DE PROFESOR - ACTUALIZAR IMÁGENES</h2>
+            
+            <div class="control-group">
+                <label class="control-label">URL Avatar Yunchen (Imgur):</label>
+                <input type="text" id="avatar-url" class="url-input" placeholder="https://i.imgur.com/...">
+                <button class="update-btn" onclick="actualizarAvatarDesdeInput()">Actualizar Avatar</button>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">URL Icono Coin (Imgur):</label>
+                <input type="text" id="coin-url" class="url-input" placeholder="https://i.imgur.com/...">
+                <button class="update-btn" onclick="actualizarCoinIconDesdeInput()">Actualizar Coin</button>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Actualizar Logro Específico:</label>
+                <input type="number" id="achievement-index" class="url-input" placeholder="Índice (0-35)" min="0" max="35">
+                <input type="text" id="achievement-url" class="url-input" placeholder="https://i.imgur.com/...">
+                <button class="update-btn" onclick="actualizarLogroDesdeInput()">Actualizar Logro</button>
+            </div>
+            
+            <div class="control-group">
+                <label class="control-label">Actualizar Todos los Logros:</label>
+                <input type="text" id="all-achievements-url" class="url-input" placeholder="https://i.imgur.com/...">
+                <button class="update-btn" onclick="actualizarTodosLosLogros()">Actualizar Todos</button>
+            </div>
+            
+            <div class="control-group">
+                <button class="update-btn" onclick="cerrarPanelProfesor()">
+                    <i class="fas fa-times"></i> Cerrar Panel de Profesor
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal de contraseña -->
+        <div class="modal" id="password-modal">
+            <div class="modal-content">
+                <h2 class="modal-title">ACCESO DE PROFESOR</h2>
+                <p style="margin-bottom: 15px; font-size: 12px;">Ingresa la contraseña para acceder al panel de profesor:</p>
+                <input type="password" id="password-input" class="password-input" placeholder="Contraseña">
+                <div class="modal-buttons">
+                    <button class="modal-btn cancel" onclick="cerrarModal()">Cancelar</button>
+                    <button class="modal-btn" onclick="verificarPassword()">Acceder</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sección Logros -->
+        <h2 class="section-title">LOGROS</h2>
+        <div class="achievements-grid" id="achievements-container">
+            <!-- Los logros se cargarán dinámicamente con JavaScript -->
+        </div>
+
+        <!-- Sección Programa -->
+        <div class="program-info">
+            <h2 class="program-title">🎨 PROGRAMA DE DIBUJO – 36 TEMAS A PROFUNDIZAR</h2>
+            <div class="program-details">
+                1 clase semanal — domingos de 9 a 10 am — a domicilio<br>
+                Inicio de primera clase : 16 de noviembre<br>
+                Artista: Yunchen
+            </div>
+            
+            <div class="topics-container" id="topics-container">
+                <!-- Los temas se cargarán dinámicamente con JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Contraseña de profesor
+        const PROFESSOR_PASSWORD = "coche#34";
+        
+        // URLs de Imgur por defecto
+        const defaultImages = {
+            avatar: 'https://i.imgur.com/x3mR3pN.png', // Avatar de ejemplo
+            coin: 'https://i.imgur.com/8Q6ZQ0W.png',   // Coin de ejemplo
+            achievement: 'https://i.imgur.com/medalla.png' // Logro de ejemplo
+        };
+
+        // Datos de logros (fechas de cada clase)
+        const achievements = [
+            { date: "16 Nov" },
+            { date: "23 Nov" },
+            { date: "30 Nov" },
+            { date: "7 Dic" },
+            { date: "14 Dic" },
+            { date: "21 Dic" },
+            { date: "28 Dic" },
+            { date: "4 Ene" },
+            { date: "11 Ene" },
+            { date: "18 Ene" },
+            { date: "25 Ene" },
+            { date: "1 Feb" },
+            { date: "8 Feb" },
+            { date: "15 Feb" },
+            { date: "22 Feb" },
+            { date: "1 Mar" },
+            { date: "8 Mar" },
+            { date: "15 Mar" },
+            { date: "22 Mar" },
+            { date: "29 Mar" },
+            { date: "5 Abr" },
+            { date: "12 Abr" },
+            { date: "19 Abr" },
+            { date: "26 Abr" },
+            { date: "3 May" },
+            { date: "10 May" },
+            { date: "17 May" },
+            { date: "24 May" },
+            { date: "31 May" },
+            { date: "7 Jun" },
+            { date: "14 Jun" },
+            { date: "21 Jun" },
+            { date: "28 Jun" },
+            { date: "5 Jul" },
+            { date: "12 Jul" },
+            { date: "19 Jul" }
+        ];
+
+        // Datos de los temas del programa
+        const topics = [
+            {
+                title: "Exploración Creativa y Diagnóstico",
+                theory: "Qué es dibujar; cómo se expresa la creatividad.",
+                activity: "Dibuja a tu personaje favorito (Roblox, Banban, TV Mort).",
+                coins: "Presentar su dibujo y contar su historia.",
+                reward: "Sticker digital animado."
+            },
+            {
+                title: "Líneas Verticales y Horizontales",
+                theory: "Qué son las líneas verticales, horizontales y para qué sirven en la composición",
+                activity: "Completar plantilla de líneas con control de pulso.",
+                coins: "Completar cada fila sin rendirse.",
+                reward: "Marco digital para perfil."
+            },
+            {
+                title: "Líneas Diagonales y Curvas",
+                theory: "En qué ayudan las líneas diagonales, qué son las líneas curvas y fluidez",
+                activity: "Crear un robot o monstruo solo con curvas + diagonales.",
+                coins: "Inventar nombre creativo.",
+                reward: "Fondo digital desbloqueable."
+            },
+            {
+                title: "Introducción al Ashurado",
+                theory: "Sombras básicas, trazos suaves, sombreado lineal.",
+                activity: "Sombrar un personaje sencillo estilo Roblox.",
+                coins: "Terminar 3 niveles de sombra.",
+                reward: "Insignia 'Sombra Maestro Nivel 1'."
+            },
+            {
+                title: "Distancias y Proporciones Básicas",
+                theory: "Qué es proporción, cómo comparar tamaños",
+                activity: "Crear un personaje pequeño, mediano y grande.",
+                coins: "Presentar una comparación graciosa.",
+                reward: "Carta digital editable."
+            },
+            {
+                title: "Detalle y Enmascarillado",
+                theory: "Qué es el detalle, qué es el enmascarillado (tapar zonas para pintar otras)",
+                activity: "Crear mascarilla para personaje (banban, roblox).",
+                coins: "Mostrar tres tipos de detalle.",
+                reward: "Efecto glitter digital."
+            },
+            {
+                title: "Formas Básicas (círculo, cuadrado, triángulo)",
+                theory: "Todo personaje inicia en formas simples.",
+                activity: "Construir 'TV Mort geométrico'.",
+                coins: "Transformar 2 formas en personajes.",
+                reward: "Emoji digital."
+            },
+            {
+                title: "Formas Complejas (cilindro, esfera, cubo)",
+                theory: "Volumen básico",
+                activity: "Dibujar monstruo en forma de cilindro-cubo-esfera.",
+                coins: "Lograr volumen visible.",
+                reward: "Sticker 3D."
+            },
+            {
+                title: "Profundidad con Superposición",
+                theory: "Un objeto delante tapa otro.",
+                activity: "Dibujo de personaje saltando sobre otro.",
+                coins: "Crear escena divertida.",
+                reward: "Efecto de sombra digital."
+            },
+            {
+                title: "Proporción del Cuerpo en Estilo Cartoon",
+                theory: "Cabeza grande, cuerpo pequeño.",
+                activity: "Crear avatar estilo cartoon Roblox.",
+                coins: "Personalizar 3 accesorios.",
+                reward: "Accesorio digital."
+            },
+            {
+                title: "Caras y Emociones",
+                theory: "Posición de ojos, qué es la ceja expresiva",
+                activity: "Caras feliz, enojado, sorpresa, miedo.",
+                coins: "Crear emoción inventada.",
+                reward: "Mini pack de emojis."
+            },
+            {
+                title: "Manos Simplificadas",
+                theory: "Manos en forma de mitón.",
+                activity: "Personaje saludando.",
+                coins: "3 poses diferentes.",
+                reward: "Insignia de anatomía."
+            },
+            {
+                title: "Pies y Zapatos Cartoon",
+                theory: "Formas simples.",
+                activity: "Zapatos roblox o banban.",
+                coins: "Diseñar zapato raro.",
+                reward: "Recompensa sorpresa."
+            },
+            {
+                title: "Volumen con Sombra",
+                theory: "Luz y sombra básica.",
+                activity: "Sombrear esfera y cubo.",
+                coins: "Completar gradientes.",
+                reward: "Luz digital animada."
+            },
+            {
+                title: "Perspectiva 1 Punto de Fuga",
+                theory: "Qué es línea de horizonte, qué es punto de fuga",
+                activity: "Camino hacia el horizonte con personaje.",
+                coins: "Crear un objeto extra.",
+                reward: "Fondo de ciudad desbloqueable."
+            },
+            {
+                title: "Perspectiva 2 Puntos de Fuga",
+                theory: "Cubo 2PF",
+                activity: "Edificio simple estilo Roblox.",
+                coins: "Añadir letrero creativo.",
+                reward: "Edificio digital."
+            },
+            {
+                title: "Perspectiva Curva / Fisheye Fácil",
+                theory: "Curvatura del entorno.",
+                activity: "Personaje deformado simpático.",
+                coins: "Crear efecto curvo en 2 objetos.",
+                reward: "Efecto burbuja."
+            },
+            {
+                title: "Ritmo y Movimiento",
+                theory: "Líneas de acción.",
+                activity: "Personaje corriendo o saltando.",
+                coins: "2 acciones adicionales.",
+                reward: "Insignia de movimiento."
+            },
+            {
+                title: "Fondos Simples",
+                theory: "Cómo dividir cielo, piso, objetos.",
+                activity: "Fondo cartoon.",
+                coins: "Añadir detalle secreto.",
+                reward: "Fondo digital."
+            },
+            {
+                title: "Fondos Avanzados",
+                theory: "Elementos que muestran profundidad.",
+                activity: "Fondo temático (jungla, ciudad, espacio).",
+                coins: "Insertar personaje mini.",
+                reward: "Fondo premium."
+            },
+            {
+                title: "Color: Psicología Básica",
+                theory: "Colores cálidos, fríos, neutros.",
+                activity: "Crear paleta del personaje.",
+                coins: "2 versiones alternas.",
+                reward: "Paleta digital."
+            },
+            {
+                title: "Color Digital (introducción)",
+                theory: "Qué es saturación y brillo.",
+                activity: "Colorear versión simple.",
+                coins: "3 estilos diferentes.",
+                reward: "Filtro gráfico."
+            },
+            {
+                title: "Texturas",
+                theory: "Líneas que simulan madera, pelo, metal.",
+                activity: "Monstruo con 3 texturas.",
+                coins: "Inventar textura nueva.",
+                reward: "Textura digital."
+            },
+            {
+                title: "Ropa y Telas",
+                theory: "Pliegues básicos.",
+                activity: "Outfit Roblox o Banban.",
+                coins: "Añadir detalles.",
+                reward: "Accesorio premium."
+            },
+            {
+                title: "Cómic: Viñetas y Globos",
+                theory: "Qué es una viñeta, globo de diálogo.",
+                activity: "Mini cómic de 3 cuadros.",
+                coins: "Twist divertido.",
+                reward: "Efecto de sonido digital."
+            },
+            {
+                title: "Luz Avanzada (Reflejos)",
+                theory: "Cómo rebota la luz.",
+                activity: "Objeto brillante.",
+                coins: "Añadir reflejo secundario.",
+                reward: "Luz especial."
+            },
+            {
+                title: "Sombras Complejas",
+                theory: "Sombra proyectada, sombra propia.",
+                activity: "Escena de acción.",
+                coins: "Añadir 2 sombras más.",
+                reward: "Insignia 'Shadow Master'."
+            },
+            {
+                title: "Criaturas Originales",
+                theory: "Composición de partes de animales.",
+                activity: "Crear híbrido creativo.",
+                coins: "Hacer ficha descriptiva.",
+                reward: "Carta coleccionable."
+            },
+            {
+                title: "Robots y Mecánica",
+                theory: "Formas mecánicas.",
+                activity: "Robot TV Mort estilo 2025.",
+                coins: "Añadir mecanismo secreto.",
+                reward: "Recompensa sorpresa."
+            },
+            {
+                title: "Mascotas Fantásticas",
+                theory: "Simplificación anatómica.",
+                activity: "Mini mascota original.",
+                coins: "Crear 2 variantes.",
+                reward: "Mascota digital."
+            },
+            {
+                title: "Ilustración Completa",
+                theory: "Composición general.",
+                activity: "Ilustración a color.",
+                coins: "Insertar 3 capas de detalle.",
+                reward: "Marco especial."
+            },
+            {
+                title: "Diseño de Personaje Original (OC)",
+                theory: "Qué es un OC.",
+                activity: "Diseñar personaje único.",
+                coins: "Rellenar ficha completa.",
+                reward: "Carta del OC."
+            },
+            {
+                title: "Expresiones Avanzadas",
+                theory: "Expresiones combinadas.",
+                activity: "6 emociones difíciles.",
+                coins: "Inventar gesto raro.",
+                reward: "Pack de emojis raro."
+            },
+            {
+                title: "Estilos Artísticos",
+                theory: "Realista, cartoon, chibi, geométrico.",
+                activity: "Dibujar personaje en 3 estilos.",
+                coins: "Explicar cuál le gustó más.",
+                reward: "Insignia de estilos."
+            },
+            {
+                title: "Preparación de Portafolio",
+                theory: "Cómo elegir mejores obras.",
+                activity: "Seleccionar 8 dibujos para su galería.",
+                coins: "Curar su portada.",
+                reward: "Fondo premium de expositor."
+            },
+            {
+                title: "Exhibición Final + Reconocimiento",
+                theory: "Qué es una exhibición.",
+                activity: "Presentación de su galería final.",
+                coins: "Presentar su historia como artista.",
+                reward: "Trofeo digital 'Gran Creativo Dibujante'."
+            }
+        ];
+
+        // Función para cargar imágenes iniciales
+        function cargarImagenesIniciales() {
+            // Cargar avatar
+            const avatarContainer = document.getElementById('avatar-container');
+            avatarContainer.innerHTML = `<img src="${defaultImages.avatar}" alt="Avatar Yunchen" class="avatar-img" id="yunchen-avatar">`;
+            
+            // Cargar coin icon
+            const coinIcon = document.getElementById('coin-icon');
+            coinIcon.innerHTML = `<img src="${defaultImages.coin}" alt="Coin" class="coin-img" id="coin-image">`;
+            
+            // Cargar coins count
+            document.getElementById('coins-count').textContent = "60";
+            
+            // Cargar logros
+            cargarLogros();
+            
+            // Cargar temas
+            cargarTemas();
+        }
+
+        // Función para cargar logros
+        function cargarLogros() {
+            const container = document.getElementById('achievements-container');
+            container.innerHTML = '';
+            
+            achievements.forEach((achievement, index) => {
+                const card = document.createElement('div');
+                card.className = 'achievement-card pixel-border';
+                card.innerHTML = `
+                    <div class="achievement-icon">
+                        <img src="${defaultImages.achievement}" alt="Logro ${index + 1}" class="achievement-img" id="achievement-${index}">
+                    </div>
+                    <div class="achievement-date">${achievement.date}</div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Función para cargar temas
+        function cargarTemas() {
+            const container = document.getElementById('topics-container');
+            container.innerHTML = '';
+            
+            topics.forEach((topic, index) => {
+                const topicElement = document.createElement('div');
+                topicElement.className = 'topic';
+                topicElement.innerHTML = `
+                    <div class="topic-header">
+                        <div class="topic-number">${index + 1}</div>
+                        <div class="topic-title">${topic.title}</div>
+                    </div>
+                    <div class="topic-content">
+                        <div class="topic-section"><strong>Teoría:</strong> ${topic.theory}</div>
+                        <div class="topic-section"><strong>Actividad:</strong> ${topic.activity}</div>
+                        <div class="topic-section coins-info"><strong>COINS:</strong> ${topic.coins}</div>
+                        <div class="topic-section reward-info"><strong>Recompensa:</strong> ${topic.reward}</div>
+                    </div>
+                `;
+                container.appendChild(topicElement);
+            });
+        }
+
+        // Funciones para el panel de profesor
+        function mostrarModalPassword() {
+            document.getElementById('password-modal').style.display = 'flex';
+            document.getElementById('password-input').focus();
+        }
+
+        function cerrarModal() {
+            document.getElementById('password-modal').style.display = 'none';
+            document.getElementById('password-input').value = '';
+        }
+
+        function verificarPassword() {
+            const password = document.getElementById('password-input').value;
+            if (password === PROFESSOR_PASSWORD) {
+                document.getElementById('update-controls').style.display = 'block';
+                cerrarModal();
+            } else {
+                alert('Contraseña incorrecta. Intenta nuevamente.');
+                document.getElementById('password-input').value = '';
+                document.getElementById('password-input').focus();
+            }
+        }
+
+        function cerrarPanelProfesor() {
+            document.getElementById('update-controls').style.display = 'none';
+        }
+
+        // Funciones de actualización de imágenes
+        function actualizarAvatarDesdeInput() {
+            const nuevaUrl = document.getElementById('avatar-url').value;
+            if (nuevaUrl) {
+                actualizarAvatar(nuevaUrl);
+                document.getElementById('avatar-url').value = '';
+            } else {
+                alert('Por favor, ingresa una URL válida de Imgur');
+            }
+        }
+
+        function actualizarCoinIconDesdeInput() {
+            const nuevaUrl = document.getElementById('coin-url').value;
+            if (nuevaUrl) {
+                actualizarCoinIcon(nuevaUrl);
+                document.getElementById('coin-url').value = '';
+            } else {
+                alert('Por favor, ingresa una URL válida de Imgur');
+            }
+        }
+
+        function actualizarLogroDesdeInput() {
+            const indice = parseInt(document.getElementById('achievement-index').value);
+            const nuevaUrl = document.getElementById('achievement-url').value;
+            
+            if (!isNaN(indice) && indice >= 0 && indice < achievements.length && nuevaUrl) {
+                actualizarLogro(indice, nuevaUrl);
+                document.getElementById('achievement-index').value = '';
+                document.getElementById('achievement-url').value = '';
+            } else {
+                alert('Por favor, ingresa un índice válido (0-35) y una URL de Imgur');
+            }
+        }
+
+        function actualizarTodosLosLogros() {
+            const nuevaUrl = document.getElementById('all-achievements-url').value;
+            if (nuevaUrl) {
+                for (let i = 0; i < achievements.length; i++) {
+                    actualizarLogro(i, nuevaUrl);
+                }
+                document.getElementById('all-achievements-url').value = '';
+            } else {
+                alert('Por favor, ingresa una URL válida de Imgur');
+            }
+        }
+
+        function actualizarAvatar(nuevaUrl) {
+            const avatarImg = document.getElementById('yunchen-avatar');
+            if (avatarImg) {
+                avatarImg.src = nuevaUrl;
+            } else {
+                document.getElementById('avatar-container').innerHTML = 
+                    `<img src="${nuevaUrl}" alt="Avatar Yunchen" class="avatar-img" id="yunchen-avatar">`;
+            }
+        }
+
+        function actualizarCoinIcon(nuevaUrl) {
+            const coinImg = document.getElementById('coin-image');
+            if (coinImg) {
+                coinImg.src = nuevaUrl;
+            } else {
+                document.getElementById('coin-icon').innerHTML = 
+                    `<img src="${nuevaUrl}" alt="Coin" class="coin-img" id="coin-image">`;
+            }
+        }
+
+        function actualizarLogro(indice, nuevaUrl) {
+            const achievementImg = document.getElementById(`achievement-${indice}`);
+            if (achievementImg) {
+                achievementImg.src = nuevaUrl;
+            }
+        }
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarImagenesIniciales();
+            
+            // Configurar evento para el botón de acceso profesor
+            document.getElementById('admin-btn').addEventListener('click', mostrarModalPassword);
+            
+            // Permitir enviar contraseña con Enter
+            document.getElementById('password-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    verificarPassword();
+                }
+            });
+            
+            // Hacer funciones globales para facilitar el acceso desde la consola
+            window.actualizarAvatar = actualizarAvatar;
+            window.actualizarCoinIcon = actualizarCoinIcon;
+            window.actualizarLogro = actualizarLogro;
+        });
+    </script>
+</body>
+</html>
